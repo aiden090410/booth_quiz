@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>테라리움 부스 퀴즈 & 룰렛</title>
-    <!-- 패드 홈화면 추가 시 앱처럼 동작 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
@@ -25,7 +24,7 @@
             border-radius: 36px;
             padding: 40px 32px;
             width: 100%;
-            max-width: 680px; /* 패드에 맞게 넓게 확대 */
+            max-width: 680px; /* 패드에 맞게 넓고 시원하게 확대 */
             text-align: center;
             box-shadow: 0 20px 45px rgba(0,0,0,0.12);
         }
@@ -75,35 +74,35 @@
         .option-item {
             display: flex;
             align-items: center;
-            padding: 16px 20px;
-            margin: 12px 0;
+            padding: 18px 22px;
+            margin: 14px 0;
             background: #f1f8e9;
             border: 3px solid #c8e6c9;
             border-radius: 18px;
-            font-size: 21px;
+            font-size: 22px;
             cursor: pointer;
             color: #272727;
             font-weight: 600;
         }
         .option-item input { margin-right: 16px; width: 26px; height: 26px; accent-color: #2e7d32; }
 
-        /* 세련된 대형 룰렛 스타일 */
+        /* 세련된 고급 대형 룰렛 디자인 */
         .roulette-wrapper {
             position: relative;
-            width: 310px;
-            height: 310px;
+            width: 320px;
+            height: 320px;
             margin: 25px auto;
         }
         .roulette-pin {
             position: absolute;
-            top: -20px;
+            top: -22px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 18px solid transparent;
-            border-right: 18px solid transparent;
-            border-top: 30px solid #d32f2f;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 32px solid #d32f2f;
             z-index: 20;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
         }
@@ -111,7 +110,7 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 8px solid #263238;
+            border: 10px solid #263238;
             box-sizing: border-box;
             background: conic-gradient(
                 #ef5350 0deg 90deg, 
@@ -120,38 +119,38 @@
                 #42a5f5 270deg 360deg
             );
             position: relative;
-            transition: transform 3.5s cubic-bezier(0.15, 0.85, 0.15, 1);
+            transition: transform 3.8s cubic-bezier(0.15, 0.85, 0.15, 1);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.25), 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.3), 0 12px 28px rgba(0,0,0,0.18);
         }
         .wheel-center {
-            width: 65px;
-            height: 65px;
+            width: 70px;
+            height: 70px;
             background: radial-gradient(circle, #ffffff 60%, #eceff1 100%);
             border-radius: 50%;
-            border: 5px solid #263238;
+            border: 6px solid #263238;
             position: absolute;
             z-index: 5;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 26px;
         }
         .sector-num {
             position: absolute;
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 800;
             color: #ffffff;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.75);
         }
-        /* 각 섹터 중앙 위치 및 단위 텍스트 */
-        .num-1 { top: 48px; right: 55px; }
-        .num-2 { bottom: 48px; right: 55px; }
-        .num-3 { bottom: 48px; left: 55px; }
-        .num-4 { top: 48px; left: 55px; }
+        /* 1개, 2개, 3개, 4개 단위 명시 */
+        .num-1 { top: 50px; right: 55px; }
+        .num-2 { bottom: 50px; right: 55px; }
+        .num-3 { bottom: 50px; left: 55px; }
+        .num-4 { top: 50px; left: 55px; }
     </style>
 </head>
 <body>
@@ -233,11 +232,11 @@
             }
         }
 
-        // 룰렛 화면만 먼저 준비시키는 단계
+        // 1단계: 룰렛 화면만 먼저 표시 (바로 돌아가지 않음)
         function showRouletteScreen() {
             document.getElementById('app').innerHTML = `
                 <div class="main-title">🎰 피규어 당첨 룰렛</div>
-                <div class="sub-title">버튼을 눌러 룰렛을 돌려보세요!</div>
+                <div class="sub-title">아래 버튼을 눌러 룰렛을 돌려보세요!</div>
                 <div class="roulette-wrapper">
                     <div class="roulette-pin"></div>
                     <div class="roulette-wheel" id="wheel">
@@ -252,7 +251,7 @@
             `;
         }
 
-        // 실제로 버튼을 누르면 돌아가는 단계
+        // 2단계: 직접 버튼을 누르면 그때 룰렛이 회전함
         function executeSpin() {
             const spinBtn = document.getElementById('spinBtn');
             spinBtn.disabled = true;
@@ -274,7 +273,7 @@
                     <div class="sub-title" style="font-size: 22px;">원하는 피규어를 <b>${finalCount}개</b> 골라 나만의 테라리움을 멋지게 꾸며보세요! 🌿</div>
                     <button class="btn btn-restart" onclick="startBooth()">다음 사람 진행하기</button>
                 `;
-            }, 3800);
+            }, 4000);
         }
 
         startBooth();
