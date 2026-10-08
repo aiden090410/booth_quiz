@@ -6,11 +6,16 @@
     <title>테라리움 부스 퀴즈 & 룰렛</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Pretendard 웹폰트 불러오기 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+            font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
         body {
-            font-family: 'Apple SD Gothic Neo', -apple-system, sans-serif;
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            background: #f0fdf4;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,27 +25,28 @@
         }
         .card-container {
             background: #ffffff;
-            border: 4px solid #81c784;
-            border-radius: 36px;
-            padding: 40px 32px;
+            border: 2px solid #bbf7d0;
+            border-radius: 32px;
+            padding: 44px 36px;
             width: 100%;
-            max-width: 680px; /* 패드에 맞게 넓고 시원하게 확대 */
+            max-width: 680px;
             text-align: center;
-            box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
         }
         .main-title {
-            color: #1b5e20;
-            font-size: 32px;
+            color: #15803d;
+            font-size: 34px;
             font-weight: 800;
             margin-bottom: 12px;
             letter-spacing: -0.5px;
         }
         .sub-title {
-            color: #2e7d32;
-            font-size: 21px;
-            margin-bottom: 28px;
+            color: #166534;
+            font-size: 22px;
+            font-weight: 500;
+            margin-bottom: 30px;
             word-break: keep-all;
-            line-height: 1.4;
+            line-height: 1.45;
         }
         .btn {
             border: none;
@@ -48,25 +54,25 @@
             font-size: 22px;
             border-radius: 20px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 700;
             width: 100%;
             margin: 10px 0;
             color: white;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-            transition: transform 0.1s, box-shadow 0.1s;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+            transition: transform 0.12s, filter 0.12s;
         }
         .btn:active { transform: scale(0.97); }
-        .btn-easy { background: linear-gradient(135deg, #4caf50, #2e7d32); }
-        .btn-medium { background: linear-gradient(135deg, #ffb300, #f57f17); }
-        .btn-hard { background: linear-gradient(135deg, #e53935, #c62828); }
-        .btn-submit { background: linear-gradient(135deg, #0288d1, #01579b); margin-top: 20px; font-size: 24px; }
-        .btn-roulette { background: linear-gradient(135deg, #ff9800, #e65100); font-size: 26px; padding: 22px; margin-top: 15px; }
-        .btn-spin { background: linear-gradient(135deg, #e91e63, #ad1457); font-size: 26px; padding: 22px; margin-top: 25px; animation: pulse 1.5s infinite; }
-        .btn-restart { background: linear-gradient(135deg, #388e3c, #1b5e20); font-size: 22px; margin-top: 20px; }
+        .btn-easy { background: linear-gradient(135deg, #22c55e, #15803d); }
+        .btn-medium { background: linear-gradient(135deg, #eab308, #ca8a04); }
+        .btn-hard { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+        .btn-submit { background: linear-gradient(135deg, #0284c7, #0369a1); margin-top: 20px; font-size: 24px; }
+        .btn-roulette { background: linear-gradient(135deg, #f59e0b, #d97706); font-size: 26px; padding: 22px; margin-top: 15px; }
+        .btn-spin { background: linear-gradient(135deg, #10b981, #047857); font-size: 26px; padding: 22px; margin-top: 25px; animation: pulse 1.6s infinite; }
+        .btn-restart { background: linear-gradient(135deg, #16a34a, #15803d); font-size: 22px; margin-top: 20px; }
         
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
+            50% { transform: scale(1.02); }
             100% { transform: scale(1); }
         }
 
@@ -75,82 +81,81 @@
             display: flex;
             align-items: center;
             padding: 18px 22px;
-            margin: 14px 0;
-            background: #f1f8e9;
-            border: 3px solid #c8e6c9;
+            margin: 12px 0;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
             border-radius: 18px;
             font-size: 22px;
             cursor: pointer;
-            color: #272727;
+            color: #1e293b;
             font-weight: 600;
         }
-        .option-item input { margin-right: 16px; width: 26px; height: 26px; accent-color: #2e7d32; }
+        .option-item input { margin-right: 16px; width: 24px; height: 24px; accent-color: #16a34a; }
 
-        /* 세련된 고급 대형 룰렛 디자인 */
+        /* 모던 세련된 룰렛 디자인 */
         .roulette-wrapper {
             position: relative;
             width: 320px;
             height: 320px;
-            margin: 25px auto;
+            margin: 30px auto;
         }
         .roulette-pin {
             position: absolute;
-            top: -22px;
+            top: -20px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 32px solid #d32f2f;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 30px solid #dc2626;
             z-index: 20;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.25));
         }
         .roulette-wheel {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 10px solid #263238;
+            border: 8px solid #0f172a;
             box-sizing: border-box;
             background: conic-gradient(
-                #ef5350 0deg 90deg, 
-                #ffca28 90deg 180deg, 
-                #26a69a 180deg 270deg, 
-                #42a5f5 270deg 360deg
+                #38bdf8 0deg 90deg, 
+                #34d399 90deg 180deg, 
+                #fbbf24 180deg 270deg, 
+                #f87171 270deg 360deg
             );
             position: relative;
             transition: transform 3.8s cubic-bezier(0.15, 0.85, 0.15, 1);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: inset 0 0 25px rgba(0,0,0,0.3), 0 12px 28px rgba(0,0,0,0.18);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
         }
         .wheel-center {
-            width: 70px;
-            height: 70px;
-            background: radial-gradient(circle, #ffffff 60%, #eceff1 100%);
+            width: 76px;
+            height: 76px;
+            background: #ffffff;
             border-radius: 50%;
-            border: 6px solid #263238;
+            border: 6px solid #0f172a;
             position: absolute;
             z-index: 5;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
+            font-size: 28px;
         }
         .sector-num {
             position: absolute;
             font-size: 28px;
             font-weight: 800;
             color: #ffffff;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.75);
+            text-shadow: 1px 2px 4px rgba(0,0,0,0.5);
         }
-        /* 1개, 2개, 3개, 4개 단위 명시 */
-        .num-1 { top: 50px; right: 55px; }
-        .num-2 { bottom: 50px; right: 55px; }
-        .num-3 { bottom: 50px; left: 55px; }
-        .num-4 { top: 50px; left: 55px; }
+        .num-1 { top: 50px; right: 52px; }
+        .num-2 { bottom: 50px; right: 52px; }
+        .num-3 { bottom: 50px; left: 52px; }
+        .num-4 { top: 50px; left: 52px; }
     </style>
 </head>
 <body>
@@ -185,8 +190,8 @@
 
         function startBooth() {
             document.getElementById('app').innerHTML = `
-                <div class="main-title">🌱 [테라리움 부스 퀴즈] 🌱</div>
-                <div class="sub-title">도전할 퀴즈 난이도를 선택해 주세요!</div>
+                <div class="main-title">🌱 테라리움 부스 퀴즈</div>
+                <div class="sub-title">난이도를 선택하면 퀴즈가 시작됩니다!</div>
                 <button class="btn btn-easy" onclick="askQuiz('easy')">🌱 쉬움 (유아 / 초등)</button>
                 <button class="btn btn-medium" onclick="askQuiz('medium')">🌿 보통 (초등고 / 중등)</button>
                 <button class="btn btn-hard" onclick="askQuiz('hard')">🌳 어려움 (고등 / 일반)</button>
@@ -203,10 +208,10 @@
             ).join('');
 
             document.getElementById('app').innerHTML = `
-                <div style="font-size: 18px; font-weight: 800; color: #2e7d32; margin-bottom: 8px;">[${levelText} 난이도]</div>
-                <div style="font-size: 24px; font-weight: bold; color: #1b5e20; text-align: left; margin-bottom: 20px; word-break: keep-all; line-height: 1.35;">${currentQ.q}</div>
+                <div style="font-size: 18px; font-weight: 800; color: #16a34a; margin-bottom: 8px;">[${levelText} 난이도]</div>
+                <div style="font-size: 24px; font-weight: 700; color: #0f172a; text-align: left; margin-bottom: 20px; word-break: keep-all; line-height: 1.4;">${currentQ.q}</div>
                 <div class="options-box">${optsHtml}</div>
-                <button class="btn btn-submit" onclick="checkAnswer()">정답 제출하기!</button>
+                <button class="btn btn-submit" onclick="checkAnswer()">정답 제출하기</button>
             `;
         }
 
@@ -219,24 +224,24 @@
 
             if (parseInt(selected.value) === currentQ.ans) {
                 document.getElementById('app').innerHTML = `
-                    <div class="main-title" style="color:#2e7d32; font-size: 36px;">🎉 정답입니다!</div>
-                    <div class="sub-title" style="font-size: 22px;">축하합니다! 아래 버튼을 눌러 피규어 룰렛판으로 이동하세요!</div>
-                    <button class="btn btn-roulette" onclick="showRouletteScreen()">🎰 룰렛 판으로 이동하기!</button>
+                    <div class="main-title" style="color:#16a34a; font-size: 36px;">🎉 정답입니다!</div>
+                    <div class="sub-title">아래 버튼을 눌러 피규어 룰렛판으로 이동하세요!</div>
+                    <button class="btn btn-roulette" onclick="showRouletteScreen()">🎰 룰렛 판으로 이동하기</button>
                 `;
             } else {
                 document.getElementById('app').innerHTML = `
-                    <div class="main-title" style="color:#c62828; font-size: 36px;">❌ 아쉽게도 오답입니다!</div>
-                    <div class="sub-title" style="font-size: 22px;">참여해 주셔서 감사합니다! 기본 피규어 1개를 드립니다! 🎁</div>
+                    <div class="main-title" style="color:#dc2626; font-size: 36px;">❌ 아쉽게도 오답입니다!</div>
+                    <div class="sub-title">참여해 주셔서 감사합니다! 기본 피규어 1개를 드립니다! 🎁</div>
                     <button class="btn btn-restart" onclick="startBooth()">다음 사람 진행하기</button>
                 `;
             }
         }
 
-        // 1단계: 룰렛 화면만 먼저 표시 (바로 돌아가지 않음)
+        // 1단계: 룰렛 화면만 먼저 표시
         function showRouletteScreen() {
             document.getElementById('app').innerHTML = `
                 <div class="main-title">🎰 피규어 당첨 룰렛</div>
-                <div class="sub-title">아래 버튼을 눌러 룰렛을 돌려보세요!</div>
+                <div class="sub-title">버튼을 눌러 룰렛을 돌려보세요!</div>
                 <div class="roulette-wrapper">
                     <div class="roulette-pin"></div>
                     <div class="roulette-wheel" id="wheel">
@@ -244,14 +249,14 @@
                         <div class="sector-num num-2">2개</div>
                         <div class="sector-num num-3">3개</div>
                         <div class="sector-num num-4">4개</div>
-                        <div class="wheel-center">👑</div>
+                        <div class="wheel-center">🌱</div>
                     </div>
                 </div>
-                <button class="btn btn-spin" id="spinBtn" onclick="executeSpin()">🔥 룰렛 시작 (터치)!</button>
+                <button class="btn btn-spin" id="spinBtn" onclick="executeSpin()">🔥 룰렛 시작 (터치)</button>
             `;
         }
 
-        // 2단계: 직접 버튼을 누르면 그때 룰렛이 회전함
+        // 2단계: 클릭 시 룰렛 회전
         function executeSpin() {
             const spinBtn = document.getElementById('spinBtn');
             spinBtn.disabled = true;
@@ -268,9 +273,9 @@
 
             setTimeout(() => {
                 document.getElementById('app').innerHTML = `
-                    <div class="main-title" style="color: #ef6c00; font-size: 36px;">🎊 당첨 축하합니다! 🎊</div>
-                    <div style="font-size: 48px; font-weight: 800; color: #c62828; margin: 20px 0;">✨ 피규어 ${finalCount}개 당첨! ✨</div>
-                    <div class="sub-title" style="font-size: 22px;">원하는 피규어를 <b>${finalCount}개</b> 골라 나만의 테라리움을 멋지게 꾸며보세요! 🌿</div>
+                    <div class="main-title" style="color: #d97706; font-size: 36px;">🎊 당첨 축하합니다! 🎊</div>
+                    <div style="font-size: 48px; font-weight: 800; color: #dc2626; margin: 20px 0;">✨ 피규어 ${finalCount}개 당첨! ✨</div>
+                    <div class="sub-title">원하는 피규어를 <b>${finalCount}개</b> 골라 나만의 테라리움을 꾸며보세요! 🌿</div>
                     <button class="btn btn-restart" onclick="startBooth()">다음 사람 진행하기</button>
                 `;
             }, 4000);
