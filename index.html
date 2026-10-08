@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>테라리움 부스 퀴즈</title>
+    <!-- 패드 홈화면 추가 시 앱처럼 보이게 설정 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Apple SD Gothic Neo', -apple-system, sans-serif; background-color: #f0fdf4; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .card-container { background: white; border: 3px solid #bbf7d0; border-radius: 28px; padding: 30px 24px; width: 100%; max-width: 460px; text-align: center; box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
+        .main-title { color: #166534; font-size: 24px; font-weight: bold; margin-bottom: 8px; }
+        .sub-title { color: #15803d; font-size: 16px; margin-bottom: 22px; word-break: keep-all; }
+        .btn { border: none; padding: 16px 20px; font-size: 17px; border-radius: 16px; cursor: pointer; font-weight: bold; width: 100%; margin: 8px 0; color: white; transition: transform 0.1s; }
+        .btn:active { transform: scale(0.96); }
+        .btn-easy { background: #22c55e; }
+        .btn-medium { background: #eab308; }
+        .btn-hard { background: #ef4444; }
+        .btn-submit { background: #0284c7; margin-top: 15px; font-size: 18px; }
+        .btn-roulette { background: #f59e0b; font-size: 20px; padding: 18px; margin-top: 10px; }
+        .btn-restart { background: #16a34a; font-size: 17px; margin-top: 15px; }
+        .options-box { text-align: left; margin: 20px 0; }
+        .option-item { display: flex; align-items: center; padding: 12px 14px; margin: 10px 0; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 17px; cursor: pointer; color: #1f2937; }
+        .option-item input { margin-right: 12px; width: 20px; height: 20px; accent-color: #16a34a; }
+        
+        /* 룰렛 디자인 */
+        .roulette-wrapper { position: relative; width: 220px; height: 220px; margin: 20px auto; }
+        .roulette-pin { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 22px solid #dc2626; z-index: 10; }
+        .roulette-wheel { width: 100%; height: 100%; border-radius: 50%; border: 6px solid #475569; box-sizing: border-box; background: conic-gradient(#ef4444 0deg 90deg, #f59e0b 90deg 180deg, #10b981 180deg 270deg, #3b82f6 270deg 360deg); position: relative; transition: transform 3.2s cubic-bezier(0.15, 0.9, 0.15, 1); display: flex; align-items: center; justify-content: center; }
+        .wheel-center { width: 45px; height: 45px; background: white; border-radius: 50%; border: 4px solid #475569; position: absolute; z-index: 5; }
+        .sector-num { position: absolute; font-size: 24px; font-weight: bold; color: white; text-shadow: 1px 1px 3px rgba(0,0,0,0.6); }
+        .num-1 { top: 30px; right: 45px; }
+        .num-2 { bottom: 30px; right: 45px; }
+        .num-3 { bottom: 30px; left: 45px; }
+        .num-4 { top: 30px; left: 45px; }
+    </style>
+</head>
+<body>
+    <div class="card-container" id="app"></div>
+
+    <script>
+        const quizData = {
+            easy: [
+                { q: "Q. 식물이 무럭무럭 자라려면 햇빛, 흙, 그리고 '이것'이 꼭 필요해요!", opts: ["1) 사탕", "2) 물", "3) 장난감", "4) 콜라"], ans: 1 },
+                { q: "Q. 테라리움 안에 넣는 폭신폭신하고 초록색인 식물의 이름은?", opts: ["1) 이끼", "2) 장미꽃", "3) 선인장", "4) 바나나"], ans: 0 },
+                { q: "Q. 식물이 햇빛을 받고 녹색을 띠게 만드는 성분의 이름은 무엇일까요?", opts: ["1) 엽록소", "2) 산소", "3) 비타민", "4) 설탕"], ans: 0 },
+                { q: "Q. 다음 중 밤에 잠을 자지 않고 움직이는 야행성 동물은 누구일까요?", opts: ["1) 병아리", "2) 부엉이", "3) 호랑나비", "4) 강아지"], ans: 1 },
+                { q: "Q. 하늘에서 내리는 비가 땅으로 떨어지면 식물은 어디로 물을 마실까요?", opts: ["1) 잎", "2) 줄기", "3) 뿌리", "4) 꽃잎"], ans: 2 }
+            ],
+            medium: [
+                { q: "Q. 테라리움(Terrarium)의 라틴어 'Terra'는 무슨 뜻일까요?", opts: ["1) 물", "2) 땅/지구", "3) 바람", "4) 불"], ans: 1 },
+                { q: "Q. 테라리움 바닥에 넣어 냄새를 없애고 물을 정화해주는 재료는?", opts: ["1) 설탕", "2) 숯(활성탄)", "3) 소금", "4) 밀가루"], ans: 1 },
+                { q: "Q. 식물이 햇빛을 받아 영양분과 산소를 만드는 작용의 이름은?", opts: ["1) 호흡 작용", "2) 광합성 작용", "3) 연소 작용", "4) 증발 작용"], ans: 1 },
+                { q: "Q. 공기 중에 가장 많이 들어 있는 기체(약 78%)는 무엇일까요?", opts: ["1) 산소", "2) 이산화탄소", "3) 질소", "4) 수소"], ans: 2 },
+                { q: "Q. 지구상에서 가장 커다란 이빨과 몸집을 가진 바다 동물은?", opts: ["1) 백상아리", "2) 대왕오징어", "3) 대왕고래", "4) 범고래"], ans: 2 }
+            ],
+            hard: [
+                { q: "Q. 뚜껑이 닫힌 밀폐형 테라리움 안에서 물이 증발했다 떨어지는 현상은?", opts: ["1) 수순환 작용", "2) 광합성 작용", "3) 삼투 현상", "4) 모세관 현상"], ans: 0 },
+                { q: "Q. 테라리움에 주로 쓰이는 '이끼'의 수분 흡수 특징으로 옳은 것은?", opts: ["1) 뿌리가 없어 잎과 줄기로 흡수", "2) 긴 뿌리로 땅속 물 흡수", "3) 꽃을 통해 흡수", "4) 물을 흡수하지 않음"], ans: 0 },
+                { q: "Q. 식물 세포에는 있지만, 동물 세포에는 없는 세포 구조는 무엇일까요?", opts: ["1) 세포막", "2) 세포벽", "3) 리보솜", "4) 미토콘드리아"], ans: 1 },
+                { q: "Q. 테라리움 내부처럼 생태계 내에서 물질이 순환해도 에너지의 총량은 일정하게 유지된다는 법칙은?", opts: ["1) 에너지 보존 법칙", "2) 관성의 법칙", "3) 작용 반작용 법칙", "4) 만유인력의 법칙"], ans: 0 },
+                { q: "Q. 지구 대기권 중 우리가 살고 있고 구름이나 비 같은 기상 현상이 일어나는 곳은?", opts: ["1) 성층권", "2) 대류권", "3) 중간권", "4) 열권"], ans: 1 }
+            ]
+        };
+
+        let currentQ = {};
+
+        function startBooth() {
+            document.getElementById('app').innerHTML = `
+                <div class="main-title">🌱 [테라리움 부스 퀴즈] 🌱</div>
+                <div class="sub-title">난이도를 선택해 주세요!</div>
+                <button class="btn btn-easy" onclick="askQuiz('easy')">🌱 쉬움 (유아 / 초등)</button>
+                <button class="btn btn-medium" onclick="askQuiz('medium')">🌿 보통 (초등고 / 중등)</button>
+                <button class="btn btn-hard" onclick="askQuiz('hard')">🌳 어려움 (고등 / 일반)</button>
+            `;
+        }
+
+        function askQuiz(level) {
+            const list = quizData[level];
+            currentQ = list[Math.floor(Math.random() * list.length)];
+            const levelText = { easy: "🌱 쉬움", medium: "🌿 보통", hard: "🌳 어려움" }[level];
+
+            let optsHtml = currentQ.opts.map((opt, idx) => 
+                `<label class="option-item"><input type="radio" name="quiz" value="${idx}"> ${opt}</label>`
+            ).join('');
+
+            document.getElementById('app').innerHTML = `
+                <div style="font-size: 14px; font-weight: bold; color: #16a34a; margin-bottom: 5px;">[${levelText} 난이도]</div>
+                <div style="font-size: 18px; font-weight: bold; color: #166534; text-align: left; margin-bottom: 15px; word-break: keep-all;">${currentQ.q}</div>
+                <div class="options-box">${optsHtml}</div>
+                <button class="btn btn-submit" onclick="checkAnswer()">정답 제출!</button>
+            `;
+        }
+
+        function checkAnswer() {
+            const selected = document.querySelector('input[name="quiz"]:checked');
+            if (!selected) {
+                alert("정답을 선택해주세요!");
+                return;
+            }
+
+            if (parseInt(selected.value) === currentQ.ans) {
+                document.getElementById('app').innerHTML = `
+                    <div class="main-title" style="color:#15803d;">🎉 정답입니다!</div>
+                    <div class="sub-title">아래 룰렛을 돌려서 피규어를 획득하세요!</div>
+                    <button class="btn btn-roulette" onclick="spinRoulette()">🎰 룰렛 돌리기!</button>
+                `;
+            } else {
+                document.getElementById('app').innerHTML = `
+                    <div class="main-title" style="color:#dc2626;">❌ 아쉽게도 오답입니다!</div>
+                    <div class="sub-title">기본 피규어 1개를 드립니다! 🎁</div>
+                    <button class="btn btn-restart" onclick="startBooth()">다음 사람 진행하기</button>
+                `;
+            }
+        }
+
+        function spinRoulette() {
+            document.getElementById('app').innerHTML = `
+                <div class="main-title">🎰 룰렛 돌아가는 중...</div>
+                <div class="roulette-wrapper">
+                    <div class="roulette-pin"></div>
+                    <div class="roulette-wheel" id="wheel">
+                        <div class="sector-num num-1">1</div>
+                        <div class="sector-num num-2">2</div>
+                        <div class="sector-num num-3">3</div>
+                        <div class="sector-num num-4">4</div>
+                        <div class="wheel-center"></div>
+                    </div>
+                </div>
+            `;
+
+            const numbers = [1, 2, 2, 3, 1, 2, 3, 4];
+            const finalCount = numbers[Math.floor(Math.random() * numbers.length)];
+            const angleMap = { 1: 315, 2: 225, 3: 135, 4: 45 };
+            const targetDeg = 1800 + angleMap[finalCount];
+
+            setTimeout(() => {
+                document.getElementById('wheel').style.transform = `rotate(${targetDeg}deg)`;
+            }, 50);
+
+            setTimeout(() => {
+                document.getElementById('app').innerHTML = `
+                    <div class="main-title" style="color: #d97706; font-size: 26px;">🎊 당첨 결과! 🎊</div>
+                    <div style="font-size: 38px; font-weight: bold; color: #dc2626; margin: 15px 0;">✨ 피규어 ${finalCount}개! ✨</div>
+                    <div class="sub-title">원하는 피규어를 ${finalCount}개 골라 테라리움을 꾸며보세요!</div>
+                    <button class="btn btn-restart" onclick="startBooth()">다음 사람 진행하기</button>
+                `;
+            }, 3500);
+        }
+
+        startBooth();
+    </script>
+</body>
+</html>
