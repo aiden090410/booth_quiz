@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -239,49 +238,4 @@
 
         // 1단계: 룰렛 화면만 먼저 표시
         function showRouletteScreen() {
-            document.getElementById('app').innerHTML = `
-                <div class="main-title">🎰 피규어 당첨 룰렛</div>
-                <div class="sub-title">버튼을 눌러 룰렛을 돌려보세요!</div>
-                <div class="roulette-wrapper">
-                    <div class="roulette-pin"></div>
-                    <div class="roulette-wheel" id="wheel">
-                        <div class="sector-num num-1">1개</div>
-                        <div class="sector-num num-2">2개</div>
-                        <div class="sector-num num-3">3개</div>
-                        <div class="sector-num num-4">4개</div>
-                        <div class="wheel-center">🌱</div>
-                    </div>
-                </div>
-                <button class="btn btn-spin" id="spinBtn" onclick="executeSpin()">🔥 룰렛 시작 (터치)</button>
-            `;
-        }
-
-        // 2단계: 클릭 시 룰렛 회전
-        function executeSpin() {
-            const spinBtn = document.getElementById('spinBtn');
-            spinBtn.disabled = true;
-            spinBtn.style.opacity = '0.6';
-            spinBtn.innerText = '🎰 회전하는 중...';
-
-            const numbers = [1, 2, 2, 3, 1, 2, 3, 4];
-            const finalCount = numbers[Math.floor(Math.random() * numbers.length)];
-            const angleMap = { 1: 315, 2: 225, 3: 135, 4: 45 };
-            const targetDeg = 1800 + angleMap[finalCount];
-
-            const wheel = document.getElementById('wheel');
-            wheel.style.transform = `rotate(${targetDeg}deg)`;
-
-            setTimeout(() => {
-                document.getElementById('app').innerHTML = `
-                    <div class="main-title" style="color: #d97706; font-size: 36px;">🎊 당첨 축하합니다! 🎊</div>
-                    <div style="font-size: 48px; font-weight: 800; color: #dc2626; margin: 20px 0;">✨ 피규어 ${finalCount}개 당첨! ✨</div>
-                    <div class="sub-title">원하는 피규어를 <b>${finalCount}개</b> 골라 나만의 테라리움을 꾸며보세요! 🌿</div>
-                    <button class="btn btn-restart" onclick="startBooth()">다음 사람 진행하기</button>
-                `;
-            }, 4000);
-        }
-
-        startBooth();
-    </script>
-</body>
-</html>
+            
