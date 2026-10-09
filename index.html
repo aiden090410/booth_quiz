@@ -1,4 +1,125 @@
-<: relative;
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>테라리움 부스 퀴즈 & 룰렛</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+    <style>
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+            font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #f0fdf4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        body {
+            padding: 24px;
+        }
+        .card-container {
+            background: #ffffff;
+            border: 3px solid #bbf7d0;
+            border-radius: 32px;
+            padding: 40px 32px;
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        }
+        .main-title {
+            color: #15803d;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+        .sub-title {
+            color: #166534;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            word-break: keep-all;
+            line-height: 1.45;
+        }
+        .btn {
+            border: none;
+            padding: 20px 24px;
+            font-size: 22px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 700;
+            width: 100%;
+            margin: 10px 0;
+            color: #ffffff;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+            transition: transform 0.12s;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-easy { background: linear-gradient(135deg, #22c55e, #15803d); }
+        .btn-medium { background: linear-gradient(135deg, #eab308, #ca8a04); }
+        .btn-hard { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+        .btn-submit { background: linear-gradient(135deg, #0284c7, #0369a1); margin-top: 20px; font-size: 24px; }
+        .btn-roulette { background: linear-gradient(135deg, #f59e0b, #d97706); font-size: 26px; padding: 22px; margin-top: 15px; }
+        .btn-spin { background: linear-gradient(135deg, #10b981, #047857); font-size: 26px; padding: 22px; margin-top: 25px; }
+        .btn-restart { background: linear-gradient(135deg, #16a34a, #15803d); font-size: 22px; margin-top: 20px; }
+
+        .options-box { text-align: left; margin: 20px 0; }
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 18px 22px;
+            margin: 12px 0;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #1e293b;
+            font-weight: 600;
+        }
+        .option-item input { margin-right: 16px; width: 24px; height: 24px; }
+
+        .roulette-wrapper {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 25px auto;
+        }
+        .roulette-pin {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 30px solid #dc2626;
+            z-index: 20;
+        }
+        .roulette-wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid #0f172a;
+            box-sizing: border-box;
+            background: conic-gradient(
+                #22c55e 0deg 90deg, 
+                #eab308 90deg 180deg, 
+                #22c55e 180deg 270deg, 
+                #f97316 270deg 360deg
+            );
+            position: relative;
             transition: transform 3.8s cubic-bezier(0.15, 0.85, 0.15, 1);
             display: flex;
             align-items: center;
@@ -21,22 +142,22 @@
         }
         .sector-num {
             position: absolute;
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 800;
             color: #ffffff;
-            text-shadow: 1px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 1px 2px 4px rgba(0,0,0,0.6);
         }
-        .num-1 { top: 50px; right: 52px; }
-        .num-2 { bottom: 50px; right: 52px; }
-        .num-3 { bottom: 50px; left: 52px; }
-        .num-4 { top: 50px; left: 52px; }
+        .num-1 { top: 45px; right: 35px; }
+        .num-2 { bottom: 45px; right: 35px; }
+        .num-3 { bottom: 45px; left: 35px; }
+        .num-4 { top: 45px; left: 35px; }
     </style>
 </head>
 <body>
     <div class="card-container" id="app"></div>
 
     <script>
-        const quizData = {
+        var quizData = {
             easy: [
                 { q: "Q. 식물이 무럭무럭 자라려면 햇빛, 흙, 그리고 '이것'이 꼭 필요해요!", opts: ["1) 사탕", "2) 물", "3) 장난감", "4) 콜라"], ans: 1 },
                 { q: "Q. 테라리움 안에 넣는 폭신폭신하고 초록색인 식물의 이름은?", opts: ["1) 이끼", "2) 장미꽃", "3) 선인장", "4) 바나나"], ans: 0 },
@@ -60,57 +181,121 @@
             ]
         };
 
-        let currentQ = {};
+        var currentQ = {};
 
         function startBooth() {
-            document.getElementById('app').innerHTML = `
-                <div class="main-title">🌱 테라리움 부스 퀴즈</div>
-                <div class="sub-title">난이도를 선택하면 퀴즈가 시작됩니다!</div>
-                <button class="btn btn-easy" onclick="askQuiz('easy')">🌱 쉬움 (유아 / 초등)</button>
-                <button class="btn btn-medium" onclick="askQuiz('medium')">🌿 보통 (초등고 / 중등)</button>
-                <button class="btn btn-hard" onclick="askQuiz('hard')">🌳 어려움 (고등 / 일반)</button>
-            `;
+            var app = document.getElementById('app');
+            if(!app) return;
+            app.innerHTML = 
+                '<div class="main-title">🌱 테라리움 부스 퀴즈</div>' +
+                '<div class="sub-title">난이도를 선택하면 퀴즈가 시작됩니다!</div>' +
+                '<button class="btn btn-easy" onclick="askQuiz(\'easy\')">🌱 쉬움 (유아 / 초등)</button>' +
+                '<button class="btn btn-medium" onclick="askQuiz(\'medium\')">🌿 보통 (초등고 / 중등)</button>' +
+                '<button class="btn btn-hard" onclick="askQuiz(\'hard\')">🌳 어려움 (고등 / 일반)</button>';
         }
 
         function askQuiz(level) {
-            const list = quizData[level];
+            var list = quizData[level];
             currentQ = list[Math.floor(Math.random() * list.length)];
-            const levelText = { easy: "🌱 쉬움", medium: "🌿 보통", hard: "🌳 어려움" }[level];
+            var levelText = { easy: "🌱 쉬움", medium: "🌿 보통", hard: "🌳 어려움" }[level];
 
-            let optsHtml = currentQ.opts.map((opt, idx) => 
-                `<label class="option-item"><input type="radio" name="quiz" value="${idx}"> ${opt}</label>`
-            ).join('');
+            var optsHtml = '';
+            for(var i = 0; i < currentQ.opts.length; i++) {
+                optsHtml += '<label class="option-item"><input type="radio" name="quiz" value="' + i + '"> ' + currentQ.opts[i] + '</label>';
+            }
 
-            document.getElementById('app').innerHTML = `
-                <div style="font-size: 18px; font-weight: 800; color: #16a34a; margin-bottom: 8px;">[${levelText} 난이도]</div>
-                <div style="font-size: 24px; font-weight: 700; color: #0f172a; text-align: left; margin-bottom: 20px; word-break: keep-all; line-height: 1.4;">${currentQ.q}</div>
-                <div class="options-box">${optsHtml}</div>
-                <button class="btn btn-submit" onclick="checkAnswer()">정답 제출하기</button>
-            `;
+            document.getElementById('app').innerHTML = 
+                '<div style="font-size: 18px; font-weight: 800; color: #16a34a; margin-bottom: 8px;">[' + levelText + ' 난이도]</div>' +
+                '<div style="font-size: 22px; font-weight: 700; color: #0f172a; text-align: left; margin-bottom: 20px; word-break: keep-all; line-height: 1.4;">' + currentQ.q + '</div>' +
+                '<div class="options-box">' + optsHtml + '</div>' +
+                '<button class="btn btn-submit" onclick="checkAnswer()">정답 제출하기</button>';
         }
 
         function checkAnswer() {
-            const selected = document.querySelector('input[name="quiz"]:checked');
+            var selected = document.querySelector('input[name="quiz"]:checked');
             if (!selected) {
                 alert("정답을 선택해주세요!");
                 return;
             }
 
             if (parseInt(selected.value) === currentQ.ans) {
-                document.getElementById('app').innerHTML = `
-                    <div class="main-title" style="color:#16a34a; font-size: 36px;">🎉 정답입니다!</div>
-                    <div class="sub-title">아래 버튼을 눌러 피규어 룰렛판으로 이동하세요!</div>
-                    <button class="btn btn-roulette" onclick="showRouletteScreen()">🎰 룰렛 판으로 이동하기</button>
-                `;
+                document.getElementById('app').innerHTML = 
+                    '<div class="main-title" style="color:#16a34a; font-size: 34px;">🎉 정답입니다!</div>' +
+                    '<div class="sub-title">아래 버튼을 눌러 상품 룰렛판으로 이동하세요!</div>' +
+                    '<button class="btn btn-roulette" onclick="showRouletteScreen()">🎰 룰렛 판으로 이동하기</button>';
             } else {
-                document.getElementById('app').innerHTML = `
-                    <div class="main-title" style="color:#dc2626; font-size: 36px;">❌ 아쉽게도 오답입니다!</div>
-                    <div class="sub-title">참여해 주셔서 감사합니다! 기본 피규어 1개를 드립니다! 🎁</div>
-                    <button class="btn btn-restart" onclick="startBooth()">다음 사람 진행하기</button>
-                `;
+                document.getElementById('app').innerHTML = 
+                    '<div class="main-title" style="color:#dc2626; font-size: 34px;">❌ 아쉽게도 오답입니다!</div>' +
+                    '<div class="sub-title">퀴즈를 맞히지 못했어요! 다음에 다시 도전해 주세요! 💚</div>' +
+                    '<button class="btn btn-restart" onclick="startBooth()">다음 사람 진행하기</button>';
             }
         }
 
-        // 1단계: 룰렛 화면만 먼저 표시
         function showRouletteScreen() {
-            
+            document.getElementById('app').innerHTML = 
+                '<div class="main-title">🎰 행운의 상품 룰렛</div>' +
+                '<div class="sub-title">버튼을 눌러 룰렛을 돌려보세요!</div>' +
+                '<div class="roulette-wrapper">' +
+                    '<div class="roulette-pin"></div>' +
+                    '<div class="roulette-wheel" id="wheel">' +
+                        '<div class="sector-num num-1">피규어 1개</div>' +
+                        '<div class="sector-num num-2">피규어 2개</div>' +
+                        '<div class="sector-num num-3">피규어 1개</div>' +
+                        '<div class="sector-num num-4">간식 1개</div>' +
+                        '<div class="wheel-center">🎁</div>' +
+                    '</div>' +
+                '</div>' +
+                '<button class="btn btn-spin" id="spinBtn" onclick="executeSpin()">🔥 룰렛 시작 (터치)</button>';
+        }
+
+        function executeSpin() {
+            var spinBtn = document.getElementById('spinBtn');
+            spinBtn.disabled = true;
+            spinBtn.style.opacity = '0.6';
+            spinBtn.innerText = '🎰 회전하는 중...';
+
+            var pools = ['fig1', 'fig1', 'fig2', 'snack'];
+            var result = pools[Math.floor(Math.random() * pools.length)];
+
+            var angle = 315;
+            if (result === 'fig1') {
+                angle = Math.random() < 0.5 ? 315 : 135;
+            } else if (result === 'fig2') {
+                angle = 225;
+            } else {
+                angle = 45;
+            }
+
+            var targetDeg = 1800 + angle;
+            var wheel = document.getElementById('wheel');
+            wheel.style.transform = 'rotate(' + targetDeg + 'deg)';
+
+            setTimeout(function() {
+                if (result === 'snack') {
+                    document.getElementById('app').innerHTML = 
+                        '<div class="main-title" style="color: #ea580c; font-size: 34px;">🍬 축하합니다! 🍬</div>' +
+                        '<div style="font-size: 40px; font-weight: 800; color: #c2410c; margin: 20px 0;">✨ 달콤한 간식 1개 당첨! ✨</div>' +
+                        '<div class="sub-title">맛있는 <b>간식 1개</b>를 수령해 가세요! 🎁</div>' +
+                        '<button class="btn btn-restart" onclick="startBooth()">다음 사람 진행하기</button>';
+                } else if (result === 'fig2') {
+                    document.getElementById('app').innerHTML = 
+                        '<div class="main-title" style="color: #eab308; font-size: 34px;">🎉 대박 축하합니다! 🎉</div>' +
+                        '<div style="font-size: 40px; font-weight: 800; color: #ca8a04; margin: 20px 0;">✨ 피규어 2개 당첨! ✨</div>' +
+                        '<div class="sub-title">마음에 드는 피규어를 무려 <b>2개</b>나 골라보세요! 🌿</div>' +
+                        '<button class="btn btn-restart" onclick="startBooth()">다음 사람 진행하기</button>';
+                } else {
+                    document.getElementById('app').innerHTML = 
+                        '<div class="main-title" style="color: #16a34a; font-size: 34px;">🎊 축하합니다! 🎊</div>' +
+                        '<div style="font-size: 40px; font-weight: 800; color: #15803d; margin: 20px 0;">✨ 피규어 1개 당첨! ✨</div>' +
+                        '<div class="sub-title">마음에 드는 피규어 <b>1개</b>를 골라 테라리움을 꾸며보세요! 🌿</div>' +
+                        '<button class="btn btn-restart" onclick="startBooth()">다음 사람 진행하기</button>';
+                }
+            }, 4000);
+        }
+
+        window.onload = function() {
+            startBooth();
+        };
+    </script>
+</body>
+</html>
